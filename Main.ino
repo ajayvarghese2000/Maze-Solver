@@ -56,15 +56,37 @@ HCSR04 USR(4, 5, 10, 70);
 SharpIR IRF(SharpIR::GP2Y0A41SK0F, A0);
 
 
+
+// Global Variables
+//      Define any global variables you need here
+
+// Array of 100 chars to store the directions the robot takes on each runs
+struct runs{
+    char turns[100];  // e.g 
+    bool valid;     //      turns[100] = {'l', 'r', 'r', 'l','e', 'e', 'e'}
+    int t_loc;      // l/r for left/right and e for end/null
+}; // Valid gets set to true after the run is complete and t-loc is the location of the T junction in the run array
+
+runs run[3];
+
+// Run selector deictates what run the robot is doing. Will be controlled by an external 3-pole switch attached to the uno
+boolean runselect[2] = {false,false};
+
+
+
 void setup(){
 
     // Starting the Serial Port
     Serial.begin(9600);
+    clearruns();
 }
 
 void loop() {
 
-	Serial.println(boebot_sensor(0));
+    solvemaze(); // does nothing right now
+
+    // Printing sensor values to simply test
+	Serial.println(boebot_sensor(2));
 
 }
 
@@ -160,4 +182,20 @@ void boebot_turn_right(){
 // An overall function that will run the solving
 void solvemaze(){
 
+}
+
+// Function to set-up default vales and clear any stored data in the 3 runs
+void clearruns(){
+    for (int i = 0; i < 3; i++) // for each run
+    {
+        run[i].t_loc = -1; // Setting an inaccesable value for the T-locaction
+        run[i].valid = false; // Setting the run to be invalid
+        
+        for (int j = 0; j < 100; j++) // for each 100 turns in each run
+        {
+            run[i].turns[j] = 'e'; // Setting all the turns to be invalid to start with
+        }
+        
+    }
+    
 }
