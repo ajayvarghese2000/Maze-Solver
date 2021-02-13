@@ -7,9 +7,6 @@
     Last Updated : 13/02/21
 
     Change Log:
-
-        13/02/21 -> Made the Code - Ajay
-
 */
 
 #include <Servo.h> // Library to Control the Motors
@@ -46,7 +43,6 @@ void setup(){
 
 void loop() {
 
-    // Output the distance in mm
 	Serial.println(boebot_sensor(2));
 
 }
@@ -55,12 +51,14 @@ void loop() {
 // Takes the sensor reqired and retuns the avrage value in mm
 int boebot_sensor(int sensor){
     
+    // Variable to store the total (Gets reset on each call)
     int total = 0;
     
+    // Switch statment to pick which sensor to ping
+    // 0 = Front; 1 = Left; 2 = Right; anyother will return an error code of -1 
     switch (sensor)
     {
     case 0: // Front Sensor
-        /* code */
         break;
     
     case 1: // Left Sensor
@@ -68,8 +66,9 @@ int boebot_sensor(int sensor){
         // Summing up 15 values
         for (int i = 0; i < 15; i++)
         {
+            // Pulsing the US Sensor and adding it to the current total
             total = USL.distanceInMillimeters() + total;
-            delay(5);
+            delay(5); // Delay to not onverload the module
         }
 
         // Getting the average
@@ -83,9 +82,10 @@ int boebot_sensor(int sensor){
         
         // Summing up 15 values
         for (int i = 0; i < 15; i++)
-        {
+        {  
+            // Pulsing the US Sensor and adding it to the current total
             total = USR.distanceInMillimeters() + total;
-            delay(5);
+            delay(5); // Delay to not onverload the module
         }
 
         // Getting the average
@@ -99,5 +99,30 @@ int boebot_sensor(int sensor){
         return -1;
         break;
     }
+
+}
+
+// Moves the boebot forward
+void boebot_move_forwards(){
+
+}
+
+// Moves the boebot backward
+void boebot_move_backwards(){
+    
+}
+
+// Turns the boebot left
+void boebot_turn_left(){
+    
+}
+
+// Turns the boebot right
+void boebot_turn_right(){
+    
+}
+
+// An overall function that will run the solving
+void solvemaze(){
 
 }
