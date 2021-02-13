@@ -55,6 +55,11 @@ HCSR04 USR(4, 5, 10, 70);
 // Creating the front IR Sensor entity on A0
 SharpIR IRF(SharpIR::GP2Y0A41SK0F, A0);
 
+// Creating the Servo entitys - Will be attached to the pins in setup()
+Servo servoleft;
+Servo servoright;
+
+
 
 
 // Global Variables
@@ -78,7 +83,14 @@ void setup(){
 
     // Starting the Serial Port
     Serial.begin(9600);
+    
+    // Resetting the stored runs
     clearruns();
+
+    // Attaching pins to the servo
+    servoleft.attach(12);
+    servoright.attach(13);
+
 }
 
 void loop() {
@@ -161,29 +173,44 @@ int boebot_sensor(int sensor){
 
 // Moves the boebot forward
 void boebot_move_forwards(){
-
+    servoleft.writeMicroseconds(1300);
+    servoright.writeMicroseconds(1700);
 }
 
 // Moves the boebot backward
 void boebot_move_backwards(){
-    
+    servoleft.writeMicroseconds(1700);
+    servoright.writeMicroseconds(1300);
 }
 
-// Turns the boebot left
+// Turns the boebot left then stops
 void boebot_turn_left(){
-    
+    servoleft.writeMicroseconds(1400);
+    servoright.writeMicroseconds(1400);
+    delay(375);
+    boebot_stop();
 }
 
 // Turns the boebot right
 void boebot_turn_right(){
+    servoleft.writeMicroseconds(1590);
+    servoright.writeMicroseconds(1590);
+    delay(380);
+    boebot_stop();
     
+}
+
+// Stops the Boebot
+void boebot_stop(){
+    servoleft.writeMicroseconds(1500);
+    servoright.writeMicroseconds(1500);
 }
 
 // An overall function that will run the solving
 void solvemaze(){
 
 }
-
+  
 // Function to set-up default vales and clear any stored data in the 3 runs
 void clearruns(){
     for (int i = 0; i < 3; i++) // for each run
