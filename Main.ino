@@ -12,9 +12,6 @@
 
 */
 
-
-
-
 #include <Servo.h> // Library to Control the Motors
 
 
@@ -42,15 +39,65 @@ HCSR04 USR(4, 5, 10, 70);
 
 
 void setup(){
+
+    // Starting the Serial Port
     Serial.begin(9600);
 }
 
 void loop() {
 
     // Output the distance in mm
-	Serial.println(USL.distanceInMillimeters());
+	Serial.println(boebot_sensor(2));
 
+}
 
+// Takes an avarage of 15 values from the sensor to combat inaccuracies
+// Takes the sensor reqired and retuns the avrage value in mm
+int boebot_sensor(int sensor){
+    
+    int total = 0;
+    
+    switch (sensor)
+    {
+    case 0: // Front Sensor
+        /* code */
+        break;
+    
+    case 1: // Left Sensor
 
-    delay(250);
+        // Summing up 15 values
+        for (int i = 0; i < 15; i++)
+        {
+            total = USL.distanceInMillimeters() + total;
+            delay(5);
+        }
+
+        // Getting the average
+        total = total/15;
+
+        // Returning the ans
+        return total;
+        break;
+    
+    case 2: // Right Sensor
+        
+        // Summing up 15 values
+        for (int i = 0; i < 15; i++)
+        {
+            total = USR.distanceInMillimeters() + total;
+            delay(5);
+        }
+
+        // Getting the average
+        total = total/15;
+
+        // Returning the ans
+        return total;
+        break;
+    
+    default:
+        return -1;
+        break;
+    }
+
 }
