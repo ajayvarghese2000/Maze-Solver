@@ -27,12 +27,33 @@
 
 */
 
+#include <SharpIR.h> // Library to Contol the IR Sensor
+
+/*
+    To use the IR library you first need to define an ir entity
+
+        SharpIR  <Name of Variable>(sensorModel, sensorPin);
+            e.g SharpIR IRF(SharpIR::GP2Y0A41SK0F, A0);
+    
+    Then you have access to subfunctions, to get the distance in millimeters do:
+        
+        <Name of Variable>.getDistance();
+    
+    This will retun the distance in cm as an int. NOTE : This auto applys a 20ms delay between reads
+
+*/
+
+// Connected Devices
+//      Define the pins of any connected devices below
 
 // Creating the Left Ultrasonic Sensor entity (Trigger Pin, Echo Pin, MinRange, MaxRange)
 HCSR04 USL(2, 3, 10, 70); // Range doesn't need to bigger than this as the robot is boput 15cm wide and the maze 22cm
 
 // Creating the right Ultrasonic Sensor entity
 HCSR04 USR(4, 5, 10, 70);
+
+// Creating the front IR Sensor entity on A0
+SharpIR IRF(SharpIR::GP2Y0A41SK0F, A0);
 
 
 void setup(){
@@ -43,7 +64,7 @@ void setup(){
 
 void loop() {
 
-	Serial.println(boebot_sensor(2));
+	Serial.println(boebot_sensor(0));
 
 }
 
@@ -59,6 +80,20 @@ int boebot_sensor(int sensor){
     switch (sensor)
     {
     case 0: // Front Sensor
+        
+        // Summing up 15 values
+        for (int i = 0; i < 15; i++)
+        {
+            // Pulsing the US Sensor and adding it to the current total
+            total = IRF.getDistance(false) + total;
+            delay(5); // Delay to not onverload the module
+        }
+
+        // Getting the average
+        total = total/15;
+
+        // Returning the ans
+        return total*10;
         break;
     
     case 1: // Left Sensor
