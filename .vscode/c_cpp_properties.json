@@ -3,9 +3,9 @@
         {
             "name": "Win32",
             "includePath": [
-                "C:\\Users\\ajayv\\Documents\\Arduino\\libraries\\Adafruit_Unified_Sensor",
-                "C:\\Users\\ajayv\\Documents\\Arduino\\libraries\\Adafruit_LSM303_Accel",
-                "C:\\Users\\ajayv\\Documents\\Arduino\\libraries\\Adafruit_LSM303DLH_Mag",
+                "C:\\Users\\ajayv\\Documents\\Arduino\\libraries\\Adafruit_Unified_Sensor\\**",
+                "C:\\Users\\ajayv\\Documents\\Arduino\\libraries\\Adafruit_LSM303_Accel\\**",
+                "C:\\Users\\ajayv\\Documents\\Arduino\\libraries\\Adafruit_LSM303DLH_Mag\\**",
                 "C:\\Users\\ajayv\\Documents\\Arduino\\libraries\\SharpIR\\src",
                 "C:\\Users\\ajayv\\Documents\\Arduino\\libraries\\Servo\\src",
                 "C:\\Program Files (x86)\\Arduino\\tools\\**",
