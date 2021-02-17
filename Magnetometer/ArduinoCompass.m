@@ -7,7 +7,7 @@ ComPort = 'COM4';
 
 %tw=readOut(s,1000);
 figure;
-max_lim = 80;
+max_lim = 35000;
 
 while true
     

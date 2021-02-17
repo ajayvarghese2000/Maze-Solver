@@ -17,6 +17,7 @@ void setup() {
   Serial.begin(9600);
   accel.begin();
   mag.begin();
+  Wire.begin();
 
   //Matlab Handshake
   //
@@ -59,9 +60,9 @@ void loop() {
   Serial.println(roll);
   */
   //Serial.print("X:");
-  Serial.println(Xh);
+  Serial.println(e.magnetic.x);
   //Serial.print("Y:");
-  Serial.println(Yh);
+  Serial.println(e.magnetic.y);
 /* 
   Serial.print(event2.acceleration.x);
   Serial.print(event2.acceleration.y);
