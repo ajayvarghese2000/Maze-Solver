@@ -43,6 +43,16 @@
 
 */
 
+#include <Wire.h> // For I2C
+#include <math.h> // For Maths
+
+// All for mag acc
+#include <Adafruit_LSM303_Accel.h>
+#include <Adafruit_LSM303DLH_Mag.h>
+#include <Adafruit_Sensor.h>
+
+
+
 // Connected Devices
 //      Define the pins of any connected devices below
 
@@ -55,10 +65,25 @@ HCSR04 USR(4, 5, 10, 70);
 // Creating the front IR Sensor entity on A0
 SharpIR IRF(SharpIR::GP2Y0A41SK0F, A0);
 
-// Creating the Servo entitys - Will be attached to the pins in setup()
+// Creating the accell and mag A4 and A5 
+Adafruit_LSM303_Accel_Unified accel = Adafruit_LSM303_Accel_Unified(51234);
+Adafruit_LSM303DLH_Mag_Unified mag = Adafruit_LSM303DLH_Mag_Unified(12345);
+
+// Creating the Servo entitys - Will be attached to the pins 11 and 10 in setup()
 Servo servoleft;
 Servo servoright;
 
+// Adding The LED's
+int led = 12; // Red
+int led2 = 13; // Green
+
+// Pause Switch
+int Pasue = 9;
+
+// Run Switchs
+int R1 = 8;
+int R2 = 7;
+int R3 = 6;
 
 
 
@@ -88,8 +113,12 @@ void setup(){
     clearruns();
 
     // Attaching pins to the servo
-    servoleft.attach(12);
-    servoright.attach(13);
+    servoleft.attach(11);
+    servoright.attach(10);
+
+    // Starting the mag accl
+    accel.begin();
+    mag.begin();
 
 }
 
