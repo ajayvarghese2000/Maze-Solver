@@ -227,8 +227,3 @@ void clearruns(){
     
 }
 
-
-void test(){
-
-    
-}
