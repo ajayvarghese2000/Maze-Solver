@@ -113,8 +113,8 @@ void setup(){
     clearruns();
 
     // Attaching pins to the servo
-    servoleft.attach(11);
-    servoright.attach(10);
+    servoleft.attach(10);
+    servoright.attach(11);
 
     // Starting the mag accl
     accel.begin();
