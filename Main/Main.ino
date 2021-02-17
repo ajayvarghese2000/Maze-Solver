@@ -78,7 +78,7 @@ int led = 12; // Red
 int led2 = 13; // Green
 
 // Pause Switch
-int Pasue = 9;
+int Pause = 9;
 
 // Run Switchs
 int R1 = 8;
