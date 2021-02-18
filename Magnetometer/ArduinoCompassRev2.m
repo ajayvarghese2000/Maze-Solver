@@ -14,8 +14,12 @@ while true
     
     x=fscanf(s,'%f');
     y=fscanf(s,'%f');
-    sprintf("X: %f", x)
-    sprintf("Y: %f", y)
+    
+    xraw=fscanf(s,'%f');
+    yraw=fscanf(s,'%f');
+    
+    %sprintf("X: %f", x)
+    %sprintf("Xraw: %f", xraw)
     %if rem(a,200)==0
     
     x_fake=[0 max_lim 0 -max_lim];
@@ -25,6 +29,7 @@ while true
     hold on;
     view(90,-90)
     %}
+    compass(xraw,yraw,'r')
     compass(x,y)
     hold off;
     %end
