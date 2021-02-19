@@ -47,9 +47,7 @@
 #include <math.h> // For Maths
 
 // All for mag acc
-#include <Adafruit_LSM303_Accel.h>
-#include <Adafruit_LSM303DLH_Mag.h>
-#include <Adafruit_Sensor.h>
+#include <LSM303.h>
 
 
 
@@ -66,8 +64,7 @@ HCSR04 USR(4, 5, 10, 70);
 SharpIR IRF(SharpIR::GP2Y0A41SK0F, A0);
 
 // Creating the accell and mag A4 and A5 
-Adafruit_LSM303_Accel_Unified accel = Adafruit_LSM303_Accel_Unified(51234);
-Adafruit_LSM303DLH_Mag_Unified mag = Adafruit_LSM303DLH_Mag_Unified(12345);
+LSM303 compass;
 
 // Creating the Servo entitys - Will be attached to the pins 11 and 10 in setup()
 Servo servoleft;
@@ -117,8 +114,9 @@ void setup(){
     servoright.attach(11);
 
     // Starting the mag accl
-    accel.begin();
-    mag.begin();
+    Wire.begin();
+    compass.init();
+    compass.enableDefault();
 
 }
 
