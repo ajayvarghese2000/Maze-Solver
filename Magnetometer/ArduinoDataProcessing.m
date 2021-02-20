@@ -1,7 +1,7 @@
 close all;
 clc;
 
-fID = fopen('rawdata.txt','r');
+fID = fopen('Test.txt','r');
 data = fscanf(fID,'%f\t%f\t%f',[3,inf]);
 fclose(fID);
 dx=data(1,:)';
@@ -32,3 +32,19 @@ daspect([1 1 1]);
 view(3);
 camlight ;
 lighting phong;
+
+A=[v(1),v(6),v(5);v(6),v(2),v(4);v(5),v(4),v(3);];
+%pcomp=[(-v(7)),(-v(8)),(-v(9)) ]';
+p=inv(A)*[(-v(7)),(-v(8)),(-v(9)) ]';
+
+C=p'*A*p-v(10);
+
+
+[V,Diag] = eig(A);
+cons=2;
+temp=A-[Diag(cons,cons) ,0 ,0;0 ,Diag(cons,cons) ,0; 0 ,0 ,Diag(cons,cons)];
+
+temp2=temp*V(:,cons);
+
+
+
