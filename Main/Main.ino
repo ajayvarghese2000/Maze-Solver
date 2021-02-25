@@ -77,7 +77,7 @@ int led2 = 13; // Green
 // Pause Switch
 int Pause = 9;
 
-// Run Switchs
+// Run Switchs Default High, Low when Active
 int R1 = 8;
 int R2 = 7;
 int R3 = 6;
@@ -118,6 +118,14 @@ void setup(){
     compass.init();
     compass.enableDefault();
 
+    // Setting Up The Run Switch
+    pinMode(R1,INPUT_PULLUP);
+    pinMode(R2,INPUT_PULLUP);
+    pinMode(R3,INPUT_PULLUP);
+
+    // Setting Up The Pause Switch
+    pinMode(Pause, INPUT);
+
 }
 
 void loop() {
@@ -125,8 +133,15 @@ void loop() {
     solvemaze(); // does nothing right now
 
     // Printing sensor values to simply test
-	Serial.println(boebot_sensor(2));
-
+	//Serial.println(boebot_sensor(2));
+    
+    
+    // Testing if the pause and runswitch works
+    while (PauseActive() == false)
+    {
+        updateRunSelect();
+    }
+    
 }
 
 // Takes an avarage of 15 values from the sensor to combat inaccuracies
@@ -252,4 +267,58 @@ void clearruns(){
         
     }
     
+}
+
+// When run it will update the global runselect variable and print which run is active
+void updateRunSelect(){
+
+    // Gets the state of the pins by doing a digital read
+    int R1_s = digitalRead(R1);
+    int R2_s = digitalRead(R2);
+    int R3_s = digitalRead(R3);
+
+    if (R1_s == 0)
+    {
+        runselect[0] = true;
+        runselect[1] = false;
+        Serial.println("RUN 1");
+    }
+    else if (R2_s == 0)
+    {
+        runselect[0] = false;
+        runselect[1] = true;
+        Serial.println("RUN 2");
+    }
+    else if (R3_s == 0)
+    {
+        runselect[0] = true;
+        runselect[1] = true;
+        Serial.println("RUN 3");
+    }
+    else
+    {
+        runselect[0] = false;
+        runselect[1] = false;
+        Serial.println("ERROR : RUN SWITCH ISSUE");
+    } 
+}
+
+// Checks if the pause switch is high and returns true/false
+boolean PauseActive(){
+    
+    // Checks the pause state
+    int Pause_S = digitalRead(Pause);
+
+    // Returns a true/false depending on the pause switch.
+    switch (Pause_S)
+    {
+    case 1:
+        Serial.println("PAUSED");
+        return true;
+        break;
+    
+    default:
+        return false;
+        break;
+    }
 }
