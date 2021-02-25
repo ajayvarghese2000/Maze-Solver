@@ -1,6 +1,8 @@
 clear all;
 clc;
 
+%fix bug and compare bias values
+
 max_ell= 75000;
 %local mag field at 
 %https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml#igrfwmm
@@ -85,7 +87,7 @@ bias2(1,:) = (bias(1,:)./newa)*localMag;
 bias2(2,:) = (bias(2,:)./newb)*localMag;
 bias2(3,:) = (bias(3,:)./newc)*localMag;
 
-bias5=data2/data4;
+bias4=data2/data4;
 
 bias3=inv(A2);
 %{
