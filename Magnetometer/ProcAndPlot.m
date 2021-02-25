@@ -1,9 +1,7 @@
-clear all;
-clc;
+function v=ProcAndPlot(data)
 
-fID = fopen('Test.txt','r');
-data = fscanf(fID,'%f\t%f\t%f',[3,inf]);
-fclose(fID);
+%proc
+
 dx=data(1,:)';
 dy=data(2,:)';
 dz=data(3,:)';
@@ -17,6 +15,11 @@ D=[dx.*dx, dy.*dy,  dz.*dz, 2.*dy.*dz, 2.*dx.*dz, 2.*dx.*dy, ...
         2.*dx, 2.*dy, 2.*dz, ones(n,1)]';
 
 v=liFit(D*D');
+
+
+
+%plot
+
 a=max_lim;  b=max_lim;  c=max_lim;
 nStep=20;
 stepA=a/nStep; stepB=b/nStep; stepC=c/nStep;
@@ -31,20 +34,7 @@ set(p, 'FaceColor', 'r', 'EdgeColor', 'none');
 daspect([1 1 1]);
 view(3);
 camlight ;
+xlabel('x')
+ylabel('y')
+zlabel('z')
 lighting phong;
-
-A=[v(1),v(6),v(5);v(6),v(2),v(4);v(5),v(4),v(3);];
-%pcomp=[(-v(7)),(-v(8)),(-v(9)) ]';
-p=inv(A)*[(-v(7)),(-v(8)),(-v(9)) ]';
-
-C=p'*A*p-v(10);
-
-
-[V,Diag] = eig(A);
-cons=2;
-temp=A-[Diag(cons,cons) ,0 ,0;0 ,Diag(cons,cons) ,0; 0 ,0 ,Diag(cons,cons)];
-
-temp2=temp*V(:,cons);
-
-
-

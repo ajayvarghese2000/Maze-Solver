@@ -1,12 +1,15 @@
+clear all
+clc
+
 % generate test data:
 [s, t]=meshgrid([0:0.3:pi/2], [0:0.3:pi]);
 % create test data:
-a=10; b=10; c=10;
+a=10; b=7; c=5;
 xx=a*cos(s).*cos(t);
 yy=b*cos(s).*sin(t);
 zz=c*sin(s);
 % add testing noise:
-noiseIntensity = 0.5;
+noiseIntensity = 0.0;
 xx=xx+randn(size(s))*noiseIntensity;
 yy=yy+randn(size(s))*noiseIntensity;
 zz=zz+randn(size(s))*noiseIntensity;
@@ -36,3 +39,36 @@ clf;
        lighting phong;
        hold on;
 plot3(dx, dy, dz, 'o');
+
+A=[v(1),v(6),v(5);v(6),v(2),v(4);v(5),v(4),v(3);];
+
+p=inv(A)*[(-v(7)),(-v(8)),(-v(9)) ]';
+
+[V,Diag] = eig(A);
+
+V2=flip(V,2);
+
+%grid
+gridlim=20;
+[~,grid]=meshgrid(1:3,-gridlim:1:gridlim);
+Xgrid=(grid*diag(V(:,1)));
+Ygrid=(grid*diag(V(:,2)));
+Zgrid=(grid*diag(V(:,3)));
+
+Xgrid2=(grid*diag(V2(:,1)));
+Ygrid2=(grid*diag(V2(:,2)));
+Zgrid2=(grid*diag(V2(:,3)));
+%V2(:,1)
+hold on;
+plot3(Xgrid(:,1),Xgrid(:,2),Xgrid(:,3),'g');
+plot3(Ygrid(:,1),Ygrid(:,2),Ygrid(:,3),'g');
+plot3(Zgrid(:,1),Zgrid(:,2),Zgrid(:,3),'g');
+
+%plot3(Xgrid2(:,1),Xgrid2(:,2),Xgrid2(:,3),'k');
+%plot3(Ygrid2(:,1),Ygrid2(:,2),Ygrid2(:,3),'k');
+%plot3(Zgrid2(:,1),Zgrid2(:,2),Zgrid2(:,3),'k');
+
+hold off;
+
+
+

@@ -5,7 +5,7 @@ a=10; %semi major
 b=2;%semi minor
 x0=0;
 y0=0;
-the = pi/4;
+the =  pi/4;
 dx=0.1;
 x=-10:dx:10;
 %Constants
@@ -16,6 +16,8 @@ D=-2*A*x0-B*y0;
 E=-B*x0 - 2*C*y0;
 F=A*x0^2+B*x0*y0+C*y0^2-a^(2)*b^(2);
 
+
+
 temp=sqrt((B*x+E).^2 - 4*C*(A*x.^2+D*x+F));
 y1=((-B*x - E) + sqrt((B*x+E).^2 - 4*C*(A*x.^2+D*x+F)))/(2*C);
 y2=((-B*x - E) - sqrt((B*x+E).^2 - 4*C*(A*x.^2+D*x+F)))/(2*C);
@@ -23,7 +25,7 @@ y1=real(y1);
 y2=real(y2);
 test=((length(x))/2);
 
-
+%{
 noiseIntensity=0.1;
 for v = 2:(length(x)/2)
     if y1(v)==y2(v)
@@ -46,6 +48,7 @@ end
 
 randn(size(1))*noiseIntensity;
 randn(size(1))*noiseIntensity;
+%}
 %{
 %---------------------------------------
 y=sqrt((a^2*b^2-a^2*(x-x0).^2)/b^2)+y0;
@@ -57,8 +60,9 @@ hold off
 %----------------------------------
 %}
 hold on
+grid on
 xlim([-10 10])
 ylim([-10 10])
-plot(x,y1,'bo');
-plot(x,y2,'bo');
+plot(x,y1,'b');
+plot(x,y2,'b');
 hold off
