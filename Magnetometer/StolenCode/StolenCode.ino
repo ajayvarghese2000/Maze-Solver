@@ -20,6 +20,10 @@ Xm_print = compass.m.x*(100000.0/1100.0); // Gain X [LSB/Gauss] for selected sen
 Ym_print = compass.m.y*(100000.0/1100.0); // Gain Y [LSB/Gauss] for selected sensor input field range
 Zm_print = compass.m.z*(100000.0/980.0 );  // Gain Z [LSB/Gauss] for selected sensor input field range
 
-Serial.print(Xm_print, 10); Serial.print(" "); Serial.print(Ym_print, 10); Serial.print(" "); Serial.println(Zm_print, 10);
+//Serial.print(Xm_print, 10); Serial.print(" "); Serial.print(Ym_print, 10); Serial.print(" "); Serial.println(Zm_print, 10);
+Serial.println(Xm_print);
+//Serial.print("Y: ");
+Serial.println(Ym_print);
+Serial.println(Zm_print);
 delay(50);
 }
