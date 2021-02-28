@@ -55,7 +55,7 @@
 //      Define the pins of any connected devices below
 
 // Creating the Left Ultrasonic Sensor entity (Trigger Pin, Echo Pin, MinRange, MaxRange)
-HCSR04 USL(2, 3, 10, 70); // Range doesn't need to bigger than this as the robot is boput 15cm wide and the maze 22cm
+HCSR04 USL(2, 3, 10, 70); // Range doesn't need to bigger than this as the robot is about 15cm wide and the maze 22cm
 
 // Creating the right Ultrasonic Sensor entity
 HCSR04 USR(4, 5, 10, 70);
@@ -129,19 +129,10 @@ void setup(){
 }
 
 void loop() {
-
-    solvemaze(); // does nothing right now
-
-    // Printing sensor values to simply test
-	//Serial.println(boebot_sensor(2));
-    
-    
-    // Testing if the pause and runswitch works
-    while (PauseActive() == false)
-    {
-        updateRunSelect();
+  while( PauseActive() == false){
+    //solvemaze();
+    IsFrontBlocked();
     }
-    
 }
 
 // Takes an avarage of 15 values from the sensor to combat inaccuracies
@@ -217,12 +208,14 @@ int boebot_sensor(int sensor){
 void boebot_move_forwards(){
     servoleft.writeMicroseconds(1300);
     servoright.writeMicroseconds(1700);
+    return;
 }
 
 // Moves the boebot backward
 void boebot_move_backwards(){
     servoleft.writeMicroseconds(1700);
     servoright.writeMicroseconds(1300);
+    return;
 }
 
 // Turns the boebot left then stops
@@ -246,11 +239,22 @@ void boebot_turn_right(){
 void boebot_stop(){
     servoleft.writeMicroseconds(1500);
     servoright.writeMicroseconds(1500);
+    return;
 }
 
 // An overall function that will run the solving
 void solvemaze(){
+    /*if ( runselect[1] == false && runselect[0] == true) // If the runsel == 01 i.e run 1
+    {
+        lefthandrule();
+    }
+    else{
+      lefthandrule();
+    }*/
 
+    lefthandrule();
+    return;
+    
 }
   
 // Function to set-up default vales and clear any stored data in the 3 runs
@@ -314,6 +318,7 @@ boolean PauseActive(){
     {
     case 1:
         Serial.println("PAUSED");
+        boebot_stop();
         return true;
         break;
     
@@ -321,4 +326,24 @@ boolean PauseActive(){
         return false;
         break;
     }
+}
+
+// Function to run the left hand rule.
+void lefthandrule(){
+    IsFrontBlocked();
+    return;
+
+
+}
+// Checks if the front is blocked.
+void IsFrontBlocked(){     
+      if(boebot_sensor(0) >= 70){
+        
+        boebot_move_forwards();
+      }
+      else{
+        boebot_stop();
+      }    
+    return;
+    
 }
