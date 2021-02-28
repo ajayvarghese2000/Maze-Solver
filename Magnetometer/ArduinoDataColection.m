@@ -9,7 +9,7 @@ dataAmount = 1500;
 %figure;
 max_lim = 75000;
 iter=0;
-fID = fopen('rawdata2.txt','w');
+fID = fopen('test3.txt','w');
 while iter < dataAmount
     iter=iter+1;
     sprintf("%f",iter)
