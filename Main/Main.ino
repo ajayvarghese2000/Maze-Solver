@@ -2,11 +2,6 @@
 
     A module addon for the Boe-Bot using ultrasonic and IR distance sensors to auto solve a maze
 
-    Created On : 13/02/21
-
-    Last Updated : 13/02/21
-
-    Change Log:
 */
 
 #include <Servo.h> // Library to Control the Motors
@@ -27,22 +22,6 @@
 
 */
 
-#include <SharpIR.h> // Library to Contol the IR Sensor
-
-/*
-    To use the IR library you first need to define an ir entity
-
-        SharpIR  <Name of Variable>(sensorModel, sensorPin);
-            e.g SharpIR IRF(SharpIR::GP2Y0A41SK0F, A0);
-    
-    Then you have access to subfunctions, to get the distance in millimeters do:
-        
-        <Name of Variable>.getDistance();
-    
-    This will retun the distance in cm as an int. NOTE : This auto applys a 20ms delay between reads
-
-*/
-
 #include <Wire.h> // For I2C
 #include <math.h> // For Maths
 
@@ -55,13 +34,10 @@
 //      Define the pins of any connected devices below
 
 // Creating the Left Ultrasonic Sensor entity (Trigger Pin, Echo Pin, MinRange, MaxRange)
-HCSR04 USL(2, 3, 10, 70); // Range doesn't need to bigger than this as the robot is about 15cm wide and the maze 22cm
+HCSR04 USL(2, 3, 10, 60); // Range doesn't need to bigger than this as the robot is about 15cm wide and the maze 22cm
 
 // Creating the right Ultrasonic Sensor entity
-HCSR04 USR(4, 5, 10, 70);
-
-// Creating the front IR Sensor entity on A0
-SharpIR IRF(SharpIR::GP2Y0A41SK0F, A0);
+HCSR04 USR(4, 5, 10, 60);
 
 // Creating the accell and mag A4 and A5 
 LSM303 compass;
@@ -86,11 +62,10 @@ int R3 = 6;
 
 // Global Variables
 //      Define any global variables you need here
-
 // Array of 100 chars to store the directions the robot takes on each runs
 struct runs{
     char turns[100];  // e.g 
-    bool valid;     //      turns[100] = {'l', 'r', 'r', 'l','e', 'e', 'e'}
+    bool valid;      //      turns[100] = {'l', 'r', 'r', 'l','e', 'e', 'e'}
     int t_loc;      // l/r for left/right and e for end/null
 }; // Valid gets set to true after the run is complete and t-loc is the location of the T junction in the run array
 
@@ -126,17 +101,19 @@ void setup(){
     // Setting Up The Pause Switch
     pinMode(Pause, INPUT);
 
+    // Setting up the LED's
+    pinMode(led, OUTPUT);
+    pinMode(led2, OUTPUT);
+
 }
 
 void loop() {
-  while( PauseActive() == false){
-    //solvemaze();
-    IsFrontBlocked();
-    }
+    solvemaze();
 }
 
 // Takes an avarage of 15 values from the sensor to combat inaccuracies
 // Takes the sensor reqired and retuns the avrage value in mm
+// 0 = front, 1 = left, 2 = right
 int boebot_sensor(int sensor){
     
     // Variable to store the total (Gets reset on each call)
@@ -152,7 +129,7 @@ int boebot_sensor(int sensor){
         for (int i = 0; i < 15; i++)
         {
             // Pulsing the US Sensor and adding it to the current total
-            total = IRF.getDistance(false) + total;
+            total = IRSensorDistance() + total;
             delay(5); // Delay to not onverload the module
         }
 
@@ -206,7 +183,7 @@ int boebot_sensor(int sensor){
 
 // Moves the boebot forward
 void boebot_move_forwards(){
-    servoleft.writeMicroseconds(1300);
+    servoleft.writeMicroseconds(1362);
     servoright.writeMicroseconds(1700);
     return;
 }
@@ -330,20 +307,86 @@ boolean PauseActive(){
 
 // Function to run the left hand rule.
 void lefthandrule(){
-    IsFrontBlocked();
-    return;
-
-
+    if (IsFrontBlocked() == true)
+    {
+        int node = AvailableTurns();
+        Serial.println(node);
+        LightLED(node);
+    }
+    else
+    {
+        return;
+    }
 }
-// Checks if the front is blocked.
-void IsFrontBlocked(){     
-      if(boebot_sensor(0) >= 70){
-        
+// Checks if the front is blocked. If the front is blocked it returns TRUE
+boolean IsFrontBlocked(){
+
+    // Checks if something is blocking the front sensor
+    if(boebot_sensor(0) > 70)
+    {
         boebot_move_forwards();
-      }
-      else{
+        return false;
+    }
+    else // Default action is to stop, so it fails to safe
+    {
         boebot_stop();
-      }    
-    return;
-    
+        return true;
+    }    
+}
+
+// Returns the distance sensed by the IR module in CM
+int IRSensorDistance(){
+    float volts = analogRead(A0)*0.0048828125;
+    int distance = 13*pow(volts, -1);
+    return distance;
+}
+
+// Function the checks what turns are avaliable and returns a number
+// 0 = no turns, 1 = left turn only, 2 = right trun only, 3 = T junction
+int AvailableTurns(){
+    int left = boebot_sensor(1); // get the left distance
+    int right = boebot_sensor(2); // get the right distance
+
+    if (left == -1 && right == -1) // T junction
+    {
+        return 3;
+    }
+    else if (0 < left && left <= 50 && right == -1) // only right
+    {
+        return 2;
+    }
+    else if (0 < right && right <= 50 && left == -1) // only left
+    {
+        return 1;
+    }
+    else
+    {
+        return 0; // dead end
+    }
+}
+
+// Lights up the LED's depending on an input
+// 0 = no light, 1 = Left LED, 2 = Right LED, 3 = Both LED
+void LightLED(int node){
+    switch (node)
+    {
+    case 0:
+        digitalWrite(led, LOW);
+        digitalWrite(led2, LOW);
+        break;
+    case 1:
+        digitalWrite(led, LOW);
+        digitalWrite(led2, HIGH);
+        break;
+    case 2:
+        digitalWrite(led, HIGH);
+        digitalWrite(led2, LOW);
+        break;
+    case 3:
+        digitalWrite(led, HIGH);
+        digitalWrite(led2, HIGH);
+        break;
+    default:
+        break;
+    }
 }
