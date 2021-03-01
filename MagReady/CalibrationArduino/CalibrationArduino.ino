@@ -42,5 +42,5 @@ Serial.println(Xm_cal,10);
 Serial.println(Ym_cal,10);
 Serial.println(Zm_cal,10);
 
-delay(50);
+delay(100);
 }

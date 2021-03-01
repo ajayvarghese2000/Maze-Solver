@@ -7,7 +7,7 @@ max_ell= 75000;
 
 %local mag field at 
 %https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml#igrfwmm
-localMag = 50000;
+localMag = 49254.5;
 
 %data read from the text file
 textFile = 'test.txt';
