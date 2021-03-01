@@ -34,9 +34,6 @@ Xm_cal =  1.073725*Xm_off + 0.006311*Ym_off + -0.002938*Zm_off; //X-axis correct
 Ym_cal =  0.006311*Xm_off + 1.020986*Ym_off + 0.007252*Zm_off; //Y-axis correction for combined scale factors
 Zm_cal =  -0.002938*Xm_off + 0.007252*Ym_off + 1.086718*Zm_off; //Z-axis correction for combined scale factors
 
-Xm_cal2 =  1.073725*Xm_off + 0.006311*Ym_off + -0.002938*Zm_off; //X-axis correction for combined scale factors (Default: positive factors)
-Ym_cal2 =  0.006311*Xm_off + 1.020986*Ym_off + 0.007252*Zm_off; //Y-axis correction for combined scale factors
-Zm_cal2 =  -0.002938*Xm_off + 0.007252*Ym_off + 1.086718*Zm_off; //Z-axis correction for combined scale factors
 
 //Serial.print(Xm_cal, 10); Serial.print(" "); Serial.print(Ym_cal, 10); Serial.print(" "); Serial.println(Zm_cal, 10);
 
