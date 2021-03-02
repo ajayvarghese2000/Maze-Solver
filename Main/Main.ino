@@ -109,8 +109,13 @@ void setup(){
 }
 
 void loop() {
-    //solvemaze();
-    Serial.println(GetCurrentAngle());
+
+    while (PauseActive() == false)
+    {
+        solvemaze();
+        //Serial.println(GetCurrentAngle());
+    }
+
 }
 
 // Takes an avarage of 15 values from the sensor to combat inaccuracies
@@ -314,6 +319,7 @@ void lefthandrule(){
         int node = AvailableTurns();
         Serial.println(node);
         LightLED(node);
+        Serial.println(GetCurrentAngle());
     }
     else
     {
@@ -396,16 +402,18 @@ void LightLED(int node){
 // Uses the magnatometer to return the current angle in degrees it is facing.
 // Remember angles are measured counter-clockwise
 double GetCurrentAngle(){
+    
     compass.read();
     double Xm_off, Ym_off, Zm_off, Xm_cal, Ym_cal, Zm_cal, ang, rot;
 
-    Xm_off = compass.m.x*(100000.0/1100.0) - 7024.10400864; //X-axis combined bias (Non calibrated data - bias)
-    Ym_off = compass.m.y*(100000.0/1100.0) + 5300.20058655; //Y-axis combined bias (Default: substracting bias)
-    Zm_off = compass.m.z*(100000.0/980.0 ) - 6550.05656025; //Z-axis combined bias
+    Xm_off = compass.m.x*(100000.0/1100.0) - -16.48888442; //X-axis combined bias (Non calibrated data - bias)
+    Ym_off = compass.m.y*(100000.0/1100.0) - -4612.45717444; //Y-axis combined bias (Default: substracting bias)
+    Zm_off = compass.m.z*(100000.0/980.0 ) - -18753.61679190; //Z-axis combined bias
 
-    Xm_cal =  0.86131059*Xm_off + 0.01089249*Ym_off + 0.01893214*Zm_off; //X-axis correction for combined scale factors (Default: positive factors)
-    Ym_cal =  0.01089249*Xm_off + 0.80200574*Ym_off + -0.01610820*Zm_off; //Y-axis correction for combined scale factors
-    Zm_cal =  0.01893214*Xm_off + -0.01610820*Ym_off + 0.88873569*Zm_off; //Z-axis correction for combined scale factors
+    Xm_cal =  0.85159519*Xm_off + -0.00879306*Ym_off + 0.00461787*Zm_off; //X-axis correction for combined scale factors (Default: positive factors)
+    Ym_cal =  -0.00879306*Xm_off + 0.82597649*Ym_off + -0.00896044*Zm_off; //Y-axis correction for combined scale factors
+    Zm_cal =  0.00461787*Xm_off + -0.00896044*Ym_off + 0.91744137*Zm_off; //Z-axis correction for combined scale factors
+
 
     ang = atan2(Ym_cal,Xm_cal);
     rot = ((ang/M_PI)*180);
