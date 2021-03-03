@@ -106,14 +106,16 @@ void setup(){
     pinMode(led, OUTPUT);
     pinMode(led2, OUTPUT);
 
+    boebot_stop();
+
 }
 
 void loop() {
 
     while (PauseActive() == false)
     {
-        solvemaze();
-        //Serial.println(GetCurrentAngle());
+        //solvemaze();
+        Serial.println(GetCurrentAngle());
     }
 
 }
@@ -301,7 +303,7 @@ boolean PauseActive(){
     switch (Pause_S)
     {
     case 1:
-        Serial.println("PAUSED");
+        //Serial.println("PAUSED");
         boebot_stop();
         return true;
         break;
@@ -317,9 +319,8 @@ void lefthandrule(){
     if (IsFrontBlocked() == true)
     {
         int node = AvailableTurns();
-        Serial.println(node);
+        //Serial.println(node);
         LightLED(node);
-        Serial.println(GetCurrentAngle());
     }
     else
     {
@@ -406,13 +407,18 @@ double GetCurrentAngle(){
     compass.read();
     double Xm_off, Ym_off, Zm_off, Xm_cal, Ym_cal, Zm_cal, ang, rot;
 
-    Xm_off = compass.m.x*(100000.0/1100.0) - -16.48888442; //X-axis combined bias (Non calibrated data - bias)
-    Ym_off = compass.m.y*(100000.0/1100.0) - -4612.45717444; //Y-axis combined bias (Default: substracting bias)
-    Zm_off = compass.m.z*(100000.0/980.0 ) - -18753.61679190; //Z-axis combined bias
+    double bias[3] = {-16.48888442, -4612.45717444, -18753.61679190}; // Bias vales for mag XYZ
+    double soft_hard_iron[3][3] = {{0.85159519, -0.00879306, 0.00461787},
+                                   {-0.00879306, 0.82597649, -0.00896044},
+                                   {0.00461787, -0.00896044, 0.91744137}};
 
-    Xm_cal =  0.85159519*Xm_off + -0.00879306*Ym_off + 0.00461787*Zm_off; //X-axis correction for combined scale factors (Default: positive factors)
-    Ym_cal =  -0.00879306*Xm_off + 0.82597649*Ym_off + -0.00896044*Zm_off; //Y-axis correction for combined scale factors
-    Zm_cal =  0.00461787*Xm_off + -0.00896044*Ym_off + 0.91744137*Zm_off; //Z-axis correction for combined scale factors
+    Xm_off = compass.m.x*(100000.0/1100.0) - bias[0]; //X-axis combined bias (Non calibrated data - bias)
+    Ym_off = compass.m.y*(100000.0/1100.0) - bias[1]; //Y-axis combined bias (Default: substracting bias)
+    Zm_off = compass.m.z*(100000.0/980.0 ) - bias[2]; //Z-axis combined bias
+
+    Xm_cal =  soft_hard_iron[0][0]*Xm_off + soft_hard_iron[0][1]*Ym_off + soft_hard_iron[0][2]*Zm_off; //X-axis correction for combined scale factors (Default: positive factors)
+    Ym_cal =  soft_hard_iron[1][0]*Xm_off + soft_hard_iron[1][1]*Ym_off + soft_hard_iron[1][2]*Zm_off; //Y-axis correction for combined scale factors
+    Zm_cal =  soft_hard_iron[2][0]*Xm_off + soft_hard_iron[2][1]*Ym_off + soft_hard_iron[2][2]*Zm_off; //Z-axis correction for combined scale factors
 
 
     ang = atan2(Ym_cal,Xm_cal);
