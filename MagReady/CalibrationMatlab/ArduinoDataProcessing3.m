@@ -10,7 +10,7 @@ max_ell= 75000;
 localMag = 49254.5;
 
 %data read from the text file
-textFile = 'test.txt';
+textFile = 'cyprusTest.txt';
 fID = fopen(textFile,'r');
 data = fscanf(fID,'%f\t%f\t%f',[3,inf]);
 fclose(fID);
