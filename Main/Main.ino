@@ -35,10 +35,10 @@
 //      Define the pins of any connected devices below
 
 // Creating the Left Ultrasonic Sensor entity (Trigger Pin, Echo Pin, MinRange, MaxRange)
-HCSR04 USL(2, 3, 10, 60); // Range doesn't need to bigger than this as the robot is about 15cm wide and the maze 22cm
+HCSR04 USL(2, 3, 10, 100); // Range doesn't need to bigger than this as the robot is about 15cm wide and the maze 22cm
 
 // Creating the right Ultrasonic Sensor entity
-HCSR04 USR(4, 5, 10, 60);
+HCSR04 USR(4, 5, 10, 100);
 
 // Creating the accell and mag A4 and A5 
 LSM303 compass;
@@ -48,8 +48,8 @@ Servo servoleft;
 Servo servoright;
 
 // Adding The LED's
-int led = 12; // Red
-int led2 = 13; // Green
+int led = 13; // Red
+int led2 = 12; // Green
 
 // Pause Switch
 int Pause = 9;
@@ -114,8 +114,10 @@ void loop() {
 
     while (PauseActive() == false)
     {
-        //solvemaze();
-        Serial.println(GetCurrentAngle());
+        solvemaze();
+        //Serial.println(GetCurrentAngle());
+        //follow_wall();
+        //testing();
     }
 
 }
@@ -331,7 +333,7 @@ void lefthandrule(){
 boolean IsFrontBlocked(){
 
     // Checks if something is blocking the front sensor
-    if(boebot_sensor(0) > 70)
+    if(boebot_sensor(0) > 50)
     {
         boebot_move_forwards();
         return false;
@@ -356,15 +358,20 @@ int AvailableTurns(){
     int left = boebot_sensor(1); // get the left distance
     int right = boebot_sensor(2); // get the right distance
 
+    Serial.print("Left Sensor = ");
+    Serial.print(left);
+    Serial.print("right Sensor = ");
+    Serial.println(right);
+
     if (left == -1 && right == -1) // T junction
     {
         return 3;
     }
-    else if (0 < left && left <= 50 && right == -1) // only right
+    else if (0 < left && left <= 90 && right == -1) // only right
     {
         return 2;
     }
-    else if (0 < right && right <= 50 && left == -1) // only left
+    else if (0 < right && right <= 90 && left == -1) // only left
     {
         return 1;
     }
@@ -431,4 +438,25 @@ double GetCurrentAngle(){
 
     return rot;
 
+}
+
+void follow_wall(){
+    Serial.println(boebot_sensor(2));
+}
+
+void testing(){
+    while (PauseActive() == false)
+    {
+        Serial.print("Left Sensor = ");
+        Serial.print(boebot_sensor(1));
+        Serial.print(" Front Sensor = ");
+        Serial.print(boebot_sensor(0));
+        Serial.print(" Right Sensor = ");
+        Serial.print(boebot_sensor(2));
+        Serial.print(" Angle = ");
+        Serial.println(GetCurrentAngle());
+        boebot_move_forwards();
+        delay(100);
+        boebot_stop();
+    }
 }
