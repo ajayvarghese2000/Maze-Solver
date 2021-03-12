@@ -114,9 +114,9 @@ void loop() {
 
     while (PauseActive() == false)
     {
-        solvemaze();
+        //solvemaze();
         //Serial.println(GetCurrentAngle());
-        //follow_wall();
+        follow_wall();
         //testing();
     }
 
@@ -441,7 +441,75 @@ double GetCurrentAngle(){
 }
 
 void follow_wall(){
-    Serial.println(boebot_sensor(2));
+    int left = boebot_sensor(1);
+    int right = boebot_sensor(2);
+
+    Serial.print("Left Sensor = ");
+    Serial.print(left);
+    Serial.print(" right Sensor = ");
+    Serial.println(right);
+
+    boebot_move_forwards();
+
+
+    if (left == -1 && right == -1)
+    {
+        boebot_stop();
+    }
+    else if (left == -1)
+    {
+        if (right < 50)
+        {
+            Serial.println("Need to turn Left");
+            servoleft.writeMicroseconds(1400);
+            servoright.writeMicroseconds(1400);
+            delay(30);
+        }
+        else
+        {
+            boebot_move_forwards();
+        }
+        
+    }
+    else if (right == -1)
+    {
+        if (left < 50)
+        {
+            Serial.println("Need to Turn Right");
+            servoleft.writeMicroseconds(1590);
+            servoright.writeMicroseconds(1590);
+            delay(30);
+        }
+        else
+        {
+            boebot_move_forwards();
+        }
+        
+    }
+    else
+    {
+        if (right < left)
+        {
+            Serial.println("Need to turn Left");
+            servoleft.writeMicroseconds(1400);
+            servoright.writeMicroseconds(1400);
+            delay(30);
+        }
+        else if(left < right)
+        {
+            Serial.println("Need to Turn Right");
+            servoleft.writeMicroseconds(1590);
+            servoright.writeMicroseconds(1590);
+            delay(30);
+        }
+        else
+        {
+            Serial.println("We are good to GO");
+            boebot_move_forwards();
+        }
+    }
+    
+    boebot_move_forwards();
 }
 
 void testing(){
