@@ -361,9 +361,9 @@ boolean IsFrontBlocked(){
     }    
 }
 
-// Returns the distance sensed by the IR module in CM
+// Returns the distance sensed by the IR module in MM
 int IRSensorDistance(){
-    float volts = analogRead(A0)*0.0048828125;
+    float volts = analogRead(A0)*0.00048828125;
     int distance = 13*pow(volts, -1);
     return distance;
 }
