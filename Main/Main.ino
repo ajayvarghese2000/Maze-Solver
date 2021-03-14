@@ -114,10 +114,13 @@ void loop() {
 
     while (PauseActive() == false)
     {
-        //solvemaze();
+        updateRunSelect();
+        solvemaze();
         //Serial.println(GetCurrentAngle());
-        follow_wall();
+        //Serial.println(boebot_sensor(0));
+        //follow_wall();
         //testing();
+        //updateRunSelect();
     }
 
 }
@@ -194,7 +197,7 @@ int boebot_sensor(int sensor){
 
 // Moves the boebot forward
 void boebot_move_forwards(){
-    servoleft.writeMicroseconds(1362);
+    servoleft.writeMicroseconds(1300);
     servoright.writeMicroseconds(1700);
     return;
 }
@@ -210,7 +213,7 @@ void boebot_move_backwards(){
 void boebot_turn_left(){
     servoleft.writeMicroseconds(1400);
     servoright.writeMicroseconds(1400);
-    delay(375);
+    delay(600);
     boebot_stop();
 }
 
@@ -218,7 +221,7 @@ void boebot_turn_left(){
 void boebot_turn_right(){
     servoleft.writeMicroseconds(1590);
     servoright.writeMicroseconds(1590);
-    delay(380);
+    delay(600);
     boebot_stop();
     
 }
@@ -232,15 +235,13 @@ void boebot_stop(){
 
 // An overall function that will run the solving
 void solvemaze(){
-    /*if ( runselect[1] == false && runselect[0] == true) // If the runsel == 01 i.e run 1
+    if ( runselect[1] == false && runselect[0] == true) // If the runsel == 01 i.e run 1
     {
         lefthandrule();
     }
     else{
-      lefthandrule();
-    }*/
-
-    lefthandrule();
+      // lefthandrule();
+    }
     return;
     
 }
@@ -323,6 +324,20 @@ void lefthandrule(){
         int node = AvailableTurns();
         //Serial.println(node);
         LightLED(node);
+        switch (node)
+        {
+        case 1:
+            boebot_turn_left();
+            break;
+        case 2:
+            boebot_turn_right();
+            break;
+        case 3:
+            boebot_turn_left();
+            break;
+        default:
+            break;
+        }
     }
     else
     {
@@ -336,6 +351,7 @@ boolean IsFrontBlocked(){
     if(boebot_sensor(0) > 50)
     {
         boebot_move_forwards();
+        follow_wall();
         return false;
     }
     else // Default action is to stop, so it fails to safe
@@ -443,46 +459,40 @@ double GetCurrentAngle(){
 void follow_wall(){
     int left = boebot_sensor(1);
     int right = boebot_sensor(2);
-
-    Serial.print("Left Sensor = ");
-    Serial.print(left);
-    Serial.print(" right Sensor = ");
-    Serial.println(right);
-
-    boebot_move_forwards();
-
-
+    //boebot_move_forwards();
     if (left == -1 && right == -1)
     {
+        //boebot_move_forwards();
+
         boebot_stop();
     }
     else if (left == -1)
     {
-        if (right < 50)
+        if (right < 55)
         {
-            Serial.println("Need to turn Left");
+            //Serial.println("Need to turn Left");
             servoleft.writeMicroseconds(1400);
             servoright.writeMicroseconds(1400);
             delay(30);
         }
         else
         {
-            boebot_move_forwards();
+            //boebot_move_forwards();
         }
         
     }
     else if (right == -1)
     {
-        if (left < 50)
+        if (left < 55)
         {
-            Serial.println("Need to Turn Right");
+            //Serial.println("Need to Turn Right");
             servoleft.writeMicroseconds(1590);
             servoright.writeMicroseconds(1590);
             delay(30);
         }
         else
         {
-            boebot_move_forwards();
+            //boebot_move_forwards();
         }
         
     }
@@ -490,22 +500,22 @@ void follow_wall(){
     {
         if (right < left)
         {
-            Serial.println("Need to turn Left");
+            //Serial.println("Need to turn Left");
             servoleft.writeMicroseconds(1400);
             servoright.writeMicroseconds(1400);
             delay(30);
         }
         else if(left < right)
         {
-            Serial.println("Need to Turn Right");
+            //Serial.println("Need to Turn Right");
             servoleft.writeMicroseconds(1590);
             servoright.writeMicroseconds(1590);
             delay(30);
         }
         else
         {
-            Serial.println("We are good to GO");
-            boebot_move_forwards();
+            //Serial.println("We are good to GO");
+            //boebot_move_forwards();
         }
     }
     
