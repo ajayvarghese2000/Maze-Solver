@@ -151,7 +151,7 @@ int boebot_sensor(int sensor){
         total = total/15;
 
         // Returning the ans
-        return total*10;
+        return total;
         break;
     
     case 1: // Left Sensor
@@ -222,6 +222,21 @@ void boebot_turn_right(){
     servoleft.writeMicroseconds(1590);
     servoright.writeMicroseconds(1590);
     delay(600);
+    boebot_stop();
+    
+}
+
+void boebot_turn_180R(){
+    servoleft.writeMicroseconds(1590);
+    servoright.writeMicroseconds(1590);
+    delay(1200);
+    boebot_stop();
+    
+}
+void boebot_turn_180L(){
+    servoleft.writeMicroseconds(1400);
+    servoright.writeMicroseconds(1400);
+    delay(1200);
     boebot_stop();
     
 }
@@ -317,6 +332,8 @@ boolean PauseActive(){
     }
 }
 
+int olddis = 10000;
+
 // Function to run the left hand rule.
 void lefthandrule(){
     if (IsFrontBlocked() == true)
@@ -328,14 +345,19 @@ void lefthandrule(){
         {
         case 1:
             boebot_turn_left();
+            olddis = 10000;
             break;
         case 2:
             boebot_turn_right();
+            olddis = 10000;
             break;
         case 3:
             boebot_turn_left();
+            olddis = 10000;
             break;
         default:
+            boebot_turn_180L();
+            olddis = 10000;
             break;
         }
     }
@@ -344,15 +366,29 @@ void lefthandrule(){
         return;
     }
 }
+
 // Checks if the front is blocked. If the front is blocked it returns TRUE
 boolean IsFrontBlocked(){
-
+    int newdis = IRSensorDistance();
+    Serial.print(olddis);
+    Serial.print(" ");
+    Serial.println(newdis);
     // Checks if something is blocking the front sensor
-    if(boebot_sensor(0) > 50)
-    {
-        boebot_move_forwards();
-        follow_wall();
-        return false;
+    if(newdis > 51)
+    {   
+        if (newdis < olddis || olddis > 70)
+        {
+            boebot_move_forwards();
+            follow_wall();
+            olddis = newdis;
+            return false;
+        }
+        else
+        {
+            boebot_stop();
+            return true;
+        }
+        
     }
     else // Default action is to stop, so it fails to safe
     {
@@ -503,14 +539,14 @@ void follow_wall(){
             //Serial.println("Need to turn Left");
             servoleft.writeMicroseconds(1400);
             servoright.writeMicroseconds(1400);
-            delay(30);
+            delay(40);
         }
         else if(left < right)
         {
             //Serial.println("Need to Turn Right");
             servoleft.writeMicroseconds(1590);
             servoright.writeMicroseconds(1590);
-            delay(30);
+            delay(40);
         }
         else
         {
