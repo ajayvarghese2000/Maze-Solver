@@ -197,8 +197,8 @@ int boebot_sensor(int sensor){
 
 // Moves the boebot forward
 void boebot_move_forwards(){
-    servoleft.writeMicroseconds(1300);
-    servoright.writeMicroseconds(1700);
+    servoleft.writeMicroseconds(1450);
+    servoright.writeMicroseconds(1550);
     return;
 }
 
@@ -213,7 +213,7 @@ void boebot_move_backwards(){
 void boebot_turn_left(){
     servoleft.writeMicroseconds(1400);
     servoright.writeMicroseconds(1400);
-    delay(600);
+    delay(550);
     boebot_stop();
 }
 
@@ -221,22 +221,22 @@ void boebot_turn_left(){
 void boebot_turn_right(){
     servoleft.writeMicroseconds(1590);
     servoright.writeMicroseconds(1590);
-    delay(600);
+    delay(550);
     boebot_stop();
     
 }
 
 void boebot_turn_180R(){
-    servoleft.writeMicroseconds(1590);
-    servoright.writeMicroseconds(1590);
-    delay(1200);
+    servoleft.writeMicroseconds(1600);
+    servoright.writeMicroseconds(1600);
+    delay(1000);
     boebot_stop();
     
 }
 void boebot_turn_180L(){
     servoleft.writeMicroseconds(1400);
     servoright.writeMicroseconds(1400);
-    delay(1200);
+    delay(1000);
     boebot_stop();
     
 }
@@ -339,7 +339,8 @@ void lefthandrule(){
     if (IsFrontBlocked() == true)
     {
         int node = AvailableTurns();
-        //Serial.println(node);
+        int left = USL.distanceInMillimeters();
+        int right = USR.distanceInMillimeters();
         LightLED(node);
         switch (node)
         {
@@ -356,8 +357,28 @@ void lefthandrule(){
             olddis = 10000;
             break;
         default:
-            boebot_turn_180L();
-            olddis = 10000;
+            boebot_turn_180R();
+            /*if (left==-1)
+            {
+                boebot_turn_180L();
+                LightLED(1);
+            }
+            else if(right ==-1)
+            {
+                boebot_turn_180R();
+                LightLED(2);
+            }
+            else if(right>left)
+            {
+                boebot_turn_180R();
+                LightLED(2);
+            }
+            else
+            {
+                boebot_turn_180L();
+                LightLED(1);
+            }
+            olddis = 10000;*/
             break;
         }
     }
@@ -374,9 +395,9 @@ boolean IsFrontBlocked(){
     Serial.print(" ");
     Serial.println(newdis);
     // Checks if something is blocking the front sensor
-    if(newdis > 51)
+    if(newdis > 45)
     {   
-        if (newdis < olddis || olddis > 70)
+        /*if (newdis < olddis || olddis > 70)
         {
             boebot_move_forwards();
             follow_wall();
@@ -387,7 +408,10 @@ boolean IsFrontBlocked(){
         {
             boebot_stop();
             return true;
-        }
+        }*/
+        boebot_move_forwards();
+        follow_wall();
+        return false;
         
     }
     else // Default action is to stop, so it fails to safe
@@ -493,8 +517,9 @@ double GetCurrentAngle(){
 }
 
 void follow_wall(){
-    int left = boebot_sensor(1);
-    int right = boebot_sensor(2);
+    int left = USL.distanceInMillimeters();
+    int right = USR.distanceInMillimeters();
+    int delayt = 30;
     //boebot_move_forwards();
     if (left == -1 && right == -1)
     {
@@ -509,7 +534,7 @@ void follow_wall(){
             //Serial.println("Need to turn Left");
             servoleft.writeMicroseconds(1400);
             servoright.writeMicroseconds(1400);
-            delay(30);
+            delay(delayt);
         }
         else
         {
@@ -524,7 +549,7 @@ void follow_wall(){
             //Serial.println("Need to Turn Right");
             servoleft.writeMicroseconds(1590);
             servoright.writeMicroseconds(1590);
-            delay(30);
+            delay(delayt);
         }
         else
         {
@@ -539,14 +564,14 @@ void follow_wall(){
             //Serial.println("Need to turn Left");
             servoleft.writeMicroseconds(1400);
             servoright.writeMicroseconds(1400);
-            delay(40);
+            delay(delayt);
         }
         else if(left < right)
         {
             //Serial.println("Need to Turn Right");
             servoleft.writeMicroseconds(1590);
             servoright.writeMicroseconds(1590);
-            delay(40);
+            delay(delayt);
         }
         else
         {
