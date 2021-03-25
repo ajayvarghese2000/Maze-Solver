@@ -68,9 +68,10 @@ struct runs{
     char turns[100];  // e.g 
     bool valid;      //      turns[100] = {'l', 'r', 'r', 'l','e', 'e', 'e'}
     int t_loc;      // l/r for left/right and e for end/null
+    int nodes;
 }; // Valid gets set to true after the run is complete and t-loc is the location of the T junction in the run array
 
-runs run[3];
+runs run[2];
 
 // Run selector deictates what run the robot is doing. Will be controlled by an external 3-pole switch attached to the uno
 boolean runselect[2] = {false,false};
@@ -121,6 +122,7 @@ void loop() {
         //follow_wall();
         //testing();
         //updateRunSelect();
+        //LightLED(2);
     }
 
 }
@@ -254,8 +256,12 @@ void solvemaze(){
     {
         lefthandrule();
     }
+    else if ( runselect[1] == true && runselect[0] == false) // If the runsel == 11 i.e run 2
+    {
+        righthandrule();
+    }
     else{
-      // lefthandrule();
+        FloodFill();
     }
     return;
     
@@ -263,7 +269,7 @@ void solvemaze(){
   
 // Function to set-up default vales and clear any stored data in the 3 runs
 void clearruns(){
-    for (int i = 0; i < 3; i++) // for each run
+    for (int i = 0; i < 2; i++) // for each run
     {
         run[i].t_loc = -1; // Setting an inaccesable value for the T-locaction
         run[i].valid = false; // Setting the run to be invalid
@@ -274,6 +280,9 @@ void clearruns(){
         }
         
     }
+
+    run[0].nodes = 0;
+    run[1].nodes = 0;
     
 }
 
@@ -332,7 +341,7 @@ boolean PauseActive(){
     }
 }
 
-int olddis = 10000;
+int LastTurn = 0;
 
 // Function to run the left hand rule.
 void lefthandrule(){
@@ -342,43 +351,23 @@ void lefthandrule(){
         int left = USL.distanceInMillimeters();
         int right = USR.distanceInMillimeters();
         LightLED(node);
+        run[0].nodes = run[0].nodes + 1;
         switch (node)
         {
         case 1:
             boebot_turn_left();
-            olddis = 10000;
+            LastTurn = 1;
             break;
         case 2:
             boebot_turn_right();
-            olddis = 10000;
+            LastTurn = 2;
             break;
         case 3:
             boebot_turn_left();
-            olddis = 10000;
+            LastTurn = 1;
             break;
         default:
-            boebot_turn_180R();
-            /*if (left==-1)
-            {
-                boebot_turn_180L();
-                LightLED(1);
-            }
-            else if(right ==-1)
-            {
-                boebot_turn_180R();
-                LightLED(2);
-            }
-            else if(right>left)
-            {
-                boebot_turn_180R();
-                LightLED(2);
-            }
-            else
-            {
-                boebot_turn_180L();
-                LightLED(1);
-            }
-            olddis = 10000;*/
+            deadend();
             break;
         }
     }
@@ -391,24 +380,9 @@ void lefthandrule(){
 // Checks if the front is blocked. If the front is blocked it returns TRUE
 boolean IsFrontBlocked(){
     int newdis = IRSensorDistance();
-    Serial.print(olddis);
-    Serial.print(" ");
-    Serial.println(newdis);
     // Checks if something is blocking the front sensor
     if(newdis > 45)
     {   
-        /*if (newdis < olddis || olddis > 70)
-        {
-            boebot_move_forwards();
-            follow_wall();
-            olddis = newdis;
-            return false;
-        }
-        else
-        {
-            boebot_stop();
-            return true;
-        }*/
         boebot_move_forwards();
         follow_wall();
         return false;
@@ -597,5 +571,77 @@ void testing(){
         boebot_move_forwards();
         delay(100);
         boebot_stop();
+    }
+}
+
+void deadend(){
+
+    if (LastTurn == 1)
+    {
+        boebot_turn_180R();
+    }
+    else if (LastTurn == 2)
+    {
+        boebot_turn_180L();
+    }
+    else
+    {
+        int left = USL.distanceInMillimeters();
+        int right = USR.distanceInMillimeters();
+        if (left>right)
+        {
+            boebot_turn_180L();
+        }
+        else
+        {
+            boebot_turn_180R();
+        }
+        
+        
+    }
+}
+
+void righthandrule(){
+    if (IsFrontBlocked() == true)
+    {
+        int node = AvailableTurns();
+        int left = USL.distanceInMillimeters();
+        int right = USR.distanceInMillimeters();
+        run[1].nodes = run[1].nodes + 1;
+        LightLED(node);
+        switch (node)
+        {
+        case 1:
+            boebot_turn_left();
+            LastTurn = 1;
+            break;
+        case 2:
+            boebot_turn_right();
+            LastTurn = 2;
+            break;
+        case 3:
+            boebot_turn_right();
+            LastTurn = 2;
+            break;
+        default:
+            deadend();
+            break;
+        }
+    }
+    else
+    {
+        return;
+    }
+}
+
+void FloodFill(){
+
+    if (run[1].nodes>run[0].nodes)
+    {
+        lefthandrule();
+    }
+    else
+    {
+        righthandrule();
     }
 }
