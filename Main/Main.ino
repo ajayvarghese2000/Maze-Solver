@@ -48,8 +48,8 @@ Servo servoleft;
 Servo servoright;
 
 // Adding The LED's
-int led = 13; // Red
-int led2 = 12; // Green
+int led = 13; // Right
+int led2 = 12; // Left
 
 // Pause Switch
 int Pause = 9;
@@ -117,7 +117,7 @@ void loop() {
         updateRunSelect();
         solvemaze();
         //Serial.println(GetCurrentAngle());
-        //Serial.println(boebot_sensor(0));
+        //Serial.println(boebot_sensor(2));
         //follow_wall();
         //testing();
         //updateRunSelect();
