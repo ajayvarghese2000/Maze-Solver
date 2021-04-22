@@ -13,7 +13,7 @@ mag.begin();
 
 
 //Matlab Handshake
-  /*
+  //
   Serial.println('a');
   char a = 'b';
   while(a != 'a')
